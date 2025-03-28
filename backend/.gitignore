@@ -1,0 +1,73 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.venv/
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+*.whl
+
+# Testing
+.tox/
+.nox/
+coverage.*
+*.cover
+.hypothesis/
+.pytest_cache/
+nosetests.xml
+test-results/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# MyPy cache
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Docker files
+*.dockerfile
+docker-compose.override.yml
+
+# Environment variables and secrets
+.env
+*.env.local
+.env.*.local
+secrets.json
+
+# Ignore compiled Cython files
+*.c
+*.so
+*.pyd
+
+# Ignore MacOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
+
+# Ignore Poetry and Pipenv files
+.poetry/
+Pipfile.lock

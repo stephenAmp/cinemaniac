@@ -1,0 +1,6 @@
+psycopg2~=2.9.10
+fastapi
+alembic
+uvicorn~=0.34.0
+pydantic
+google-genai~=1.5.0
