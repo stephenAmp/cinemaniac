@@ -14,7 +14,7 @@ class User(Base):
     email:Mapped[str] = mapped_column(String, unique=True)
     hashed_password:Mapped[str] = mapped_column(String)
     preference:Mapped[dict] = mapped_column(JSONB)
-    created_at:Mapped[datetime] = mapped_column(DateTime, default = datetime.now())
+    created_at:Mapped[datetime] = mapped_column(DateTime, default = datetime.now)
 
 class Movie(Base):
     __tablename__ = "movies"
@@ -28,7 +28,7 @@ class Movie(Base):
     poster_url:Mapped[str] = mapped_column(String)
     imdb_rating:Mapped[int] = mapped_column(Float)
     movie_metadata:Mapped[dict] = mapped_column(JSONB)
-    created_at:Mapped[datetime] = mapped_column(DateTime, default =datetime.now())
+    created_at:Mapped[datetime] = mapped_column(DateTime, default =datetime.now)
 
 
 class Genre(Base):

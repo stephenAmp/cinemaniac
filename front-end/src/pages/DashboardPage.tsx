@@ -1,5 +1,11 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import inception from '@/assets/inception.jpg'
+import batman from '@/assets/batman.jpg'
+import shawshank from '@/assets/shawshank.jpg'
+import fg from '@/assets/fg.jpg'
+import fc from '@/assets/fc.jpg'
+import pf from '@/assets/pulpfiction.jpg'
 import {
   Film,
   Search,
@@ -28,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+
 // Mock data for movies
 const recommendedMovies = [
   {
@@ -35,7 +42,7 @@ const recommendedMovies = [
     title: "Inception",
     year: 2010,
     rating: 8.8,
-    poster: "/placeholder.svg?height=450&width=300",
+    poster: inception,
     genre: "Sci-Fi",
   },
   {
@@ -43,7 +50,7 @@ const recommendedMovies = [
     title: "The Shawshank Redemption",
     year: 1994,
     rating: 9.3,
-    poster: "/placeholder.svg?height=450&width=300",
+    poster: shawshank,
     genre: "Drama",
   },
   {
@@ -51,7 +58,7 @@ const recommendedMovies = [
     title: "The Dark Knight",
     year: 2008,
     rating: 9.0,
-    poster: "/placeholder.svg?height=450&width=300",
+    poster: batman,
     genre: "Action",
   },
   {
@@ -59,7 +66,7 @@ const recommendedMovies = [
     title: "Pulp Fiction",
     year: 1994,
     rating: 8.9,
-    poster: "/placeholder.svg?height=450&width=300",
+    poster: pf,
     genre: "Crime",
   },
   {
@@ -67,7 +74,7 @@ const recommendedMovies = [
     title: "Fight Club",
     year: 1999,
     rating: 8.8,
-    poster: "/placeholder.svg?height=450&width=300",
+    poster: fc,
     genre: "Drama",
   },
   {
@@ -75,7 +82,7 @@ const recommendedMovies = [
     title: "Forrest Gump",
     year: 1994,
     rating: 8.8,
-    poster: "/placeholder.svg?height=450&width=300",
+    poster: fg,
     genre: "Drama",
   },
 ]

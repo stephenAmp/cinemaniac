@@ -1,7 +1,9 @@
-from fastapi import FastAPI,HTTPException,status,Depends
-from db import get_db
+from fastapi import FastAPI,HTTPException,status,Depends,Request
+from fastapi.middleware.cors import CORSMiddleware
+import time
+from api import main
+from core.db import get_db
 from sqlalchemy.orm import Session
-from schema import UserSchema,UserResponseSchema
 from models import User
 import uvicorn
 import requests
@@ -15,21 +17,29 @@ GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemin
 
 app=FastAPI()
 
-@app.get('/')
-def root():
-    return 'Hi this is the beginning of the mental health app!'
+origins = ['http://localhost:5173/']
 
-@app.post('/user', response_model=UserResponseSchema)
-def create_user(user:UserSchema, db:Session =Depends(get_db)):
-    user_data = user.model_dump()
-    db_user = User(**user_data)
-    try:
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-    except Exception as e:
-        raise HTTPException(status_code = status.HTTP_400_BAD_REQUEST, detail = f'failed to add user to db:{e}')
-    return db_user
+#CORS 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials = True,
+    allow_methods=['*'],
+    allow_headers=['*']
+)
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    log_message = f"{request.method} {request.url} completed in {process_time:.4f} secs"
+    print(log_message)
+    return response
+app.include_router(main.router, prefix='/api')
+
+
+
 
 
 
