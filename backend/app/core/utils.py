@@ -29,7 +29,7 @@ def get_password_hash(password):
     return hashed_password.decode('utf-8')
 
 # Check if the provided password matches the stored password (hashed)
-def verify_password(plain_password, hashed_password):
+def verify_password(plain_password:str, hashed_password):
     password_byte_enc = plain_password.encode('utf-8')
 
     # If the hashed_password is stored as a string, convert it back to bytes
@@ -57,7 +57,7 @@ def create_access_token(data: dict, expiry: timedelta = None, refresh: bool = Fa
     payload["exp"] = datetime.now() + (expiry if expiry is not None else timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     payload['jti'] = str(uuid.uuid4())
     payload['refresh'] = refresh
-    token = jwt.encode(payload=payload, key=jwt_key, algorithm=jwt_algorithm)
+    token = jwt.encode(payload, key=jwt_key, algorithm=jwt_algorithm)
     return token
 
 def verify_token(token: str = Depends(oauth2_scheme)):

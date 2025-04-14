@@ -11,14 +11,15 @@ class Preference(BaseModel):
 class UserSchema(BaseModel):
     name: str
     email: str
-    hashed_password: str
     preference:Optional[Preference] = None
-
+    class Config:
+        from_attributes = True
 
 class  UserResponseSchema(UserSchema):
     id:int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-
+class UserCreateSchema(UserSchema):
+    password: str

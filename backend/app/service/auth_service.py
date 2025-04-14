@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from schema.AuthSchema import UserSchema
+from schema.AuthSchema import UserSchema, UserResponseSchema
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 from core.utils import get_password_hash, verify_password, create_access_token,verify_token
@@ -16,7 +16,7 @@ class AuthService:
             raise HTTPException(status_code = 400, detail = 'user already exists')
         
         #handle hashing of password
-        hashed_password = get_password_hash(user.hashed_password)
+        hashed_password = get_password_hash(user.password)
 
         #creating db instance
         db_new_user = User(
@@ -37,9 +37,7 @@ class AuthService:
     
     
     async def login(self, payload:OAuth2PasswordRequestForm):
-        existing_user = self.db.query(
-            User.email == payload.username
-        ).first()
+        existing_user = self.db.query(User).filter(User.email == payload.username).first()
         if not existing_user:
             raise HTTPException(status_code = 404, detail = 'incorrect username or password', headers = {"WWW-Authenticate": "Bearer"})
         if not verify_password(payload.password, existing_user.hashed_password):
@@ -51,7 +49,7 @@ class AuthService:
             'access_token': access_token,
             'refresh_token': refresh_token,
             'token_type': 'bearer',
-            'user': UserSchema.from_orm(existing_user)
+            'user': UserResponseSchema.model_validate(existing_user)
         }
         
     

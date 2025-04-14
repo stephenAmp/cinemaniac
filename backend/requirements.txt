@@ -4,3 +4,8 @@ alembic
 uvicorn~=0.34.0
 pydantic
 google-genai~=1.5.0
+PyJWT    
+bcrypt
+jinja2
+fastapi_mail
+python-multipart
