@@ -1,21 +1,34 @@
 import '@/index.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import AuthPage from '../src/pages/AuthPage'
+import {  Routes, Route } from 'react-router-dom'
+import 'react-toastify/dist/ReactToastify.css'
+import AuthPage from './pages/AuthPage'
 import Dashboard  from './pages/DashboardPage'
+import PrivateRoute from './auth/PrivateRoute'
 import UserPreferences from './pages/UserPreferencePage'
+import { ToastContainer } from 'react-toastify'
 
 
 export default function App(){
 
   return(
     <>
-    <Router>
       <Routes>
         <Route path='/' element={<AuthPage/>}/>
-        <Route path='/dashboard' element={<Dashboard/>}/>
-        <Route path='/user-preferences' element={<UserPreferences/>}/>
+        <Route path='/dashboard' element={
+          <PrivateRoute>
+            <Dashboard/>
+          </PrivateRoute>
+          }/>
+        <Route path='/user-preferences' element={
+          <PrivateRoute>
+            <UserPreferences/>
+          </PrivateRoute>
+          }
+        />
       </Routes>
-    </Router>
+
+      {/* Toast container */}
+      <ToastContainer position ='top-right' autoClose={3000}/>
     </>
   )
 }

@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import  useAuth  from '@/auth/useAuth'
+import {  useState } from "react"
+import { loginAPI, registerAPI } from "@/api/auth"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,24 +13,49 @@ import { Separator } from "@/components/ui/separator"
 import { Film, Mail, Lock, User, Facebook, Apple } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
+
+
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  
+  const [ username, setUsername ] = useState<string>("")
+  const [email, setEmail] = useState<string>('')
+  // const [loginErrorMsg, setLoginErrorMsg] = useState<string>('')
+  const [name, setName] = useState<string>('')
+  const [ password, setPassword ] = useState<string>("")
+  const { login } = useAuth()
+
   const navigate = useNavigate()
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-    // Implement your sign up logic here
-    setTimeout(() => setIsLoading(false), 1000) // Simulating API call
+
+    // sign up logic
+    const response = await registerAPI({email, password, name})
+    const access_token = response?.access_token
+    if(access_token){
+      login(access_token)
+      navigate('/dashboard')
+    }else{
+      console.error('sign up failed')
+    }
+    setIsLoading(false)
   }
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-    navigate('dashboard')
-    // Implement your login logic here
-    setTimeout(() => setIsLoading(false), 1000) // Simulating API call
+
+    // login logic
+    const response = await loginAPI({username, password})
+    const access_token  = response?.access_token
+    if(access_token){
+      login(access_token)
+      navigate('/dashboard')
+    }else{
+      console.error('login failed. Access token not found')
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -62,13 +88,15 @@ export default function AuthPage() {
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email-login" className="text-white">
-                      Email
+                      Username
                     </Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                       <Input
                         id="email-login"
                         type="email"
+                        value={username}
+                        onChange={(e)=>setUsername(e.target.value)}
                         placeholder="you@example.com"
                         className="pl-10 bg-slate-900 border-slate-800"
                         required
@@ -90,6 +118,8 @@ export default function AuthPage() {
                       <Input
                         id="password-login"
                         type="password"
+                        value={password}
+                        onChange = {(e)=>setPassword(e.target.value)}
                         className="pl-10 bg-slate-900 border-slate-800"
                         required
                       />
@@ -99,6 +129,7 @@ export default function AuthPage() {
                   <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isLoading}>
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
+                  {/* <p>{loginErrorMsg}</p> */}
                 </form>
 
                 <div className="relative my-6">
@@ -159,6 +190,8 @@ export default function AuthPage() {
                       <Input
                         id="name"
                         placeholder="John Doe"
+                        value={name}
+                        onChange = {(e)=>setName(e.target.value)}
                         className="pl-10 bg-slate-900 border-slate-800"
                         required
                       />
@@ -174,6 +207,8 @@ export default function AuthPage() {
                       <Input
                         id="email-signup"
                         type="email"
+                        value = {email}
+                        onChange = {(e)=>setEmail(e.target.value)}
                         placeholder="you@example.com"
                         className="pl-10 bg-slate-900 border-slate-800"
                         required
@@ -190,6 +225,8 @@ export default function AuthPage() {
                       <Input
                         id="password-signup"
                         type="password"
+                        value={password}
+                        onChange = {(e)=>setPassword(e.target.value)}
                         className="pl-10 bg-slate-900 border-slate-800"
                         required
                       />
@@ -258,4 +295,5 @@ export default function AuthPage() {
     </div>
   )
 }
+
 

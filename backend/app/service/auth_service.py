@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from schema.AuthSchema import UserSchema, UserResponseSchema
+from schema.AuthSchema import UserCreateSchema, UserResponseSchema
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 from core.utils import get_password_hash, verify_password, create_access_token,verify_token
@@ -10,7 +10,7 @@ class AuthService:
     def __init__(self,db:Session):
         self.db = db
 
-    async def create_user(self,user:UserSchema):
+    async def create_user(self,user:UserCreateSchema):
         existing_user = self.db.query(User).filter(User.email == user.email).first()
         if existing_user:
             raise HTTPException(status_code = 400, detail = 'user already exists')
@@ -33,7 +33,21 @@ class AuthService:
             self.db.rollback()
             print(e)
             raise HTTPException(status_code = 500, detail = 'failed to create user due to database error ')
-        return db_new_user
+        
+        #  Generate JWT token
+        userObj = {'id':db_new_user.id, 'email': db_new_user.email}
+        access_token = create_access_token(data=userObj, expiry = timedelta(days = 2), refresh = False)
+        refresh_token = create_access_token(data=userObj, expiry = timedelta(days = 2), refresh = True)
+
+        return {"access_token": access_token, 
+                'refresh_token':refresh_token, 
+                "token_type": "bearer",  
+                'id': db_new_user.id,
+                'name': db_new_user.name,
+                'email': db_new_user.email,
+                'preference': db_new_user.preference
+                }
+
     
     
     async def login(self, payload:OAuth2PasswordRequestForm):
@@ -49,13 +63,15 @@ class AuthService:
             'access_token': access_token,
             'refresh_token': refresh_token,
             'token_type': 'bearer',
-            'user': UserResponseSchema.model_validate(existing_user)
+            'user_id': existing_user.id, 
+            'user_email': existing_user.email, 
+            'user_preference': existing_user.preference, 
         }
         
     
     async def read_all_users(self):
-        user = self.db.query(User).all()
-        return user
+        users = self.db.query(User).all()
+        return ([{'id':user.id,"name":user.name,'email':user.email,'preference':user.preference} for user in users])
     
     async def delete_user(self,user_id):
         user = self.db.query(User).filter(User.id == user_id).first()
@@ -63,4 +79,4 @@ class AuthService:
             raise HTTPException(status_code=404, detail = 'user not found')
         self.db.delete(user)
         self.db.commit()
-        return user
+        return {'id':user.id, 'name':user.name, 'email':user.email, 'preference': user.preference}
