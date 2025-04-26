@@ -3,28 +3,25 @@ import { handleError } from '@/utils/errorHandling';
 import { LoginResponse, RegisterResponse } from '@/schema/auth';
 
 const API = axios.create({
-    baseURL: 'http://localhost:8000'
+    baseURL: 'http://localhost:8000/api',
 });
 
-interface loginUserType{
-    username:string;
-    password:string;
-}
 
-interface registerUserType{
-    email: string;
-    name:string;
-    password:string
-}
-
-export const loginAPI = async({username,password}:loginUserType) =>{
-    try{
-    const res = await API.post<LoginResponse>('/login', {username, password})
-    return res.data
-    }catch(error){
-        handleError(error)
+    interface registerUserType{
+        email: string;
+        name:string;
+        password:string
     }
-}
+
+    export const loginAPI = async(formData:FormData) =>{
+        try{
+            const res = await API.post<LoginResponse>('/login',formData)
+            return res.data
+        }catch(error){
+            handleError(error)
+            throw error
+        }
+    }
 
 export const registerAPI = async({email, name, password}:registerUserType)=>{
     try{

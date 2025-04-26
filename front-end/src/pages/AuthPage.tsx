@@ -3,6 +3,7 @@
 import type React from "react"
 import  useAuth  from '@/auth/useAuth'
 import {  useState } from "react"
+import { toast } from 'react-toastify'
 import { loginAPI, registerAPI } from "@/api/auth"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,33 +31,53 @@ export default function AuthPage() {
     e.preventDefault()
     setIsLoading(true)
 
-    // sign up logic
-    const response = await registerAPI({email, password, name})
-    const access_token = response?.access_token
-    if(access_token){
-      login(access_token)
-      navigate('/dashboard')
-    }else{
-      console.error('sign up failed')
+    if(!name || !email || !password){
+      toast.error('Please enter credentials')
+      return
     }
-    setIsLoading(false)
+    try{
+      const response = await registerAPI({email, password, name})
+      const access_token = response?.access_token
+      if(access_token){
+        login(access_token)
+        toast.success('account successfully created')
+        navigate('/dashboard')
+      }else{
+        console.error('no token provided')
+      }
+    }catch(error){
+      console.error(`error occured while signing up: ${error}`)
+    }finally{
+      setIsLoading(false)
+    }
   }
-
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
 
-    // login logic
-    const response = await loginAPI({username, password})
-    const access_token  = response?.access_token
-    if(access_token){
-      login(access_token)
-      navigate('/dashboard')
-    }else{
-      console.error('login failed. Access token not found')
+    if(!username || !password){
+      toast.error('Provide username and login')
+      return
     }
-    setIsLoading(false)
-  }
+
+      try{
+        const formData = new FormData()
+        formData.append('username', username)
+        formData.append('password', password)
+        const response = await loginAPI(formData)
+        const access_token = response?.access_token
+        if(access_token){
+          login(access_token)
+          navigate('/dashboard')
+        }else{
+          console.error('Error! No token found')
+        }
+      }catch(error){
+        console.error(`An error occured while logging in: ${error}`)
+      }finally{
+        setIsLoading(false)
+      }
+    }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black to-slate-900 p-4">
@@ -295,5 +316,4 @@ export default function AuthPage() {
     </div>
   )
 }
-
 
