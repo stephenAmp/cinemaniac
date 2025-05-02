@@ -17,7 +17,7 @@ GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemin
 
 app=FastAPI()
 
-origins = ['http://localhost:5173/']
+origins = ['http://localhost:5173']
 
 #CORS 
 app.add_middleware(
