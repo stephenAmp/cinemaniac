@@ -1,10 +1,10 @@
 from fastapi import FastAPI,HTTPException,status,Depends,Request
 from fastapi.middleware.cors import CORSMiddleware
 import time
-from api import main
-from core.db import get_db
+from app.api import main
+from app.core.db import get_db
 from sqlalchemy.orm import Session
-from models import User
+from app.models import User
 import uvicorn
 import requests
 from dotenv import load_dotenv

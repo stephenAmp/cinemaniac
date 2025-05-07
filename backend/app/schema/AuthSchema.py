@@ -17,15 +17,6 @@ class UserSchema(BaseModel):
     email: str
     preference: Optional[Preference]
 
-class UserCreateSchema(BaseModel):
-    name: str
-    email: str
-    password: str
-    preference: Optional[Preference]
-
-
-    class Config:
-        from_attributes = True
 
 
 class UserResponseSchema(BaseModel):

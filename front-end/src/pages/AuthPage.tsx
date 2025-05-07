@@ -41,6 +41,7 @@ export default function AuthPage() {
       if(access_token){
         login(access_token)
         toast.success('account successfully created')
+        //should route you to onboarding page where we take preference details
         navigate('/dashboard')
       }else{
         console.error('no token provided')

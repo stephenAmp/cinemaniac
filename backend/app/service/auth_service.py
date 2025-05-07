@@ -1,10 +1,13 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from schema.AuthSchema import UserCreateSchema, UserResponseSchema
+from app.schema.AuthSchema import UserCreateSchema
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
-from backend.app.core.utils.general import get_password_hash, verify_password, create_access_token,verify_token
-from models import User
+from app.core.utils.general import get_password_hash, verify_password, create_access_token,verify_token
+from authlib.oauth2.rfc6749 import OAuth2Token
+from authlib.integrations.starlette_client import OAuthError
+from app.core.config import oauth
+from app.models import User
 
 class AuthService:
     def __init__(self,db:Session):
@@ -80,3 +83,35 @@ class AuthService:
         self.db.delete(user)
         self.db.commit()
         return {'id':user.id, 'name':user.name, 'email':user.email, 'preference': user.preference}
+    
+
+    async def handle_callback(self, request):
+        try:
+            token: OAuth2Token = await oauth.google.authorize_access_token(request)
+        except OAuthError:
+            raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail = 'Invalid Credentials')
+        
+        user_info = await oauth.google.parse_id_token(request, token)
+        print(user_info)
+        existing_user = self.db.query(User).filter(User.email == user_info['email']).first()
+        if not existing_user:
+            new_user = User(
+                id =  user_info['sub'],
+                email = user_info['email'],
+                name = user_info['name']
+            )
+  
+            self.db.add(new_user)
+            self.db.refresh(new_user)
+            return{
+            'access_token': token,
+            'user_id': new_user.id, 
+            'user_email': new_user.email, 
+            'user_preference': new_user.preference, 
+            }
+        return {
+            'access_token': token,
+            'user_id': existing_user.id, 
+            'user_email': existing_user.email, 
+            'user_preference': existing_user.preference,    
+        }

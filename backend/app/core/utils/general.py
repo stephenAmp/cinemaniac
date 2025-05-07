@@ -7,8 +7,8 @@ from fastapi_mail import MessageSchema,FastMail
 from datetime import datetime, timedelta
 import uuid
 from sqlalchemy.orm import Session
-from models import User
-from core.db import get_db
+from app.models import User
+from app.core.db import get_db
 # from core.email_config import email_config
 from io import BytesIO
 import base64

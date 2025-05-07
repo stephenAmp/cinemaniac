@@ -6,6 +6,8 @@ from datetime import datetime
 
 Base = declarative_base()
 
+#change model_IDs to strings
+
 class User(Base):
     __tablename__ = "users"
 
